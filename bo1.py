@@ -7,13 +7,6 @@ black = (0,0,0)
 red = (255,0,0)
 blue = (0,0,255)
 green = (125,175,125)
-Width = 800
-Height = 600
-x_pos = 350
-y_pos = 580
-x = 400
-y = 300
-
 
 
  
@@ -21,38 +14,40 @@ class Paddle(pygame.sprite.Sprite):
 
 
 	def __init__(self):
-		super().__init__()
+		pygame.sprite.Sprite. __init__(self)
 		self.width = 100
 		self.height = 20
 		self.image = pygame.Surface([self.width,self.height])
 		self.image.fill(blue)
 
 		self.rect = self.image.get_rect()
-		self.rect.x = x_pos
-		self.rect.y = y_pos
-
-	def update(self):
-		# self.rect.x = x_pos
-		key = pygame.key.get_pressed()
-		if key[pygame.K_LEFT]:
-			self.x_pos -= 10
-		#if event.key == pygame.K_RIGHT:
-			# paddle.self.x_pos+= 10
-
-class Ball(pygame.sprite.Sprite):
-	degree = 180 
-	speed = 10
-
-	def __init__(self):
-		super().__init__()
-		self.width = 15
-		self.height = 15
-		self.image = pygame.Surface([self.width,self.height])
-		self.image.fill(blue)
-
 		self.rect = self.image.get_rect()
-		self.rect.x = x
-		self.rect.y = y
+		self.screenheight = pygame.display.get_surface().get_height()
+		self.screenwidth = pygame.display.get_surface().get_width()
+		self.rect.x = 0
+		self.rect.y = self.screenheight-self.height
+
+	def update(self, action):
+		pos = pygame.mouse.get_pos()
+		self.rect.x = pos[0]
+		if self.rect.x > self.screenwidth - self.width:
+			self.rect.x = self.screenwidth - self.width
+	
+
+# class Ball(pygame.sprite.Sprite):
+# 	degree = 180 
+# 	speed = 10
+
+# 	def __init__(self):
+# 		super().__init__()
+# 		self.width = 15
+# 		self.height = 15
+# 		self.image = pygame.Surface([self.width,self.height])
+# 		self.image.fill(blue)
+
+# 		self.rect = self.image.get_rect()
+# 		self.rect.x = x
+# 		self.rect.y = y
 
 
 class Block(pygame.sprite.Sprite):
@@ -79,8 +74,8 @@ clock = pygame.time.Clock()
 
 blocks = pygame.sprite.Group()
 sprites = pygame.sprite.Group()
-ball = Ball()
-sprites.add(ball)
+# ball = Ball()
+# sprites.add(ball)
 paddle = Paddle()
 sprites.add(paddle)
 # --- Create blocks
@@ -95,7 +90,7 @@ for row in range(5):
         sprites.add(block)
     # Move the top of the next row down
     top += block_height + 2
-gameDisplay = pygame.display.set_mode((Width, Height))
+gameDisplay = pygame.display.set_mode((800, 600))
 screen = gameDisplay
 screen.fill(black)
 
@@ -106,21 +101,21 @@ pygame.display.set_caption("Breakout Project")
 gameExit = False
 
 while not gameExit:
-	Ball()
+	# Ball()
 	Paddle()
 	# Block()
-	# Paddle.update()
+	
 	
 	pygame.display.update()
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			gameExit = True
 	
-	# if event.type == pygame.KEYDOWN:
-		# if event.key == pygame.K_LEFT:
-		# 	paddle.self.x_pos -= 10
-		# if event.key == pygame.K_RIGHT:
-		# 	paddle.self.x_pos+= 10
+	if event.type == pygame.KEYDOWN:
+		if event.key == pygame.K_LEFT:
+			x_pos -= 10
+		if event.key == pygame.K_RIGHT:
+			x_pos += 10
 
 
 	sprites.update()
