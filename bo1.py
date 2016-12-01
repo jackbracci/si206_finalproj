@@ -67,9 +67,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def update(self):
-
-
-
         self.rect.y -= 10
 
 class Falling(pygame.sprite.Sprite):
@@ -82,6 +79,11 @@ class Falling(pygame.sprite.Sprite):
 	def back_to_top(self):
 		self.rect.y = random.randrange(-400, -50)
 		self.rect.x = random.randrange(0, Height)
+
+	def fall_collide_with(self, paddle):
+		if self.rect.colliderect(paddle.rect) == True:
+			game_over = True
+
 
 	def update(self):
 		self.rect.y += 15
@@ -108,24 +110,7 @@ class Score(pygame.sprite.Sprite):
 		txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
 		screen.blit(txt, (400 - txt.get_width() / 2, 100))
 
-
-# class Mob(pygame.sprite.Sprite):
-#     # mob sprite - spawns above top and moves downward
-#     def __init__(self):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = pygame.Surface((30, 40))
-#         self.image.fill(RED)
-#         self.rect = self.image.get_rect()
-#         self.rect.x = random.randrange(Width - self.rect.width)
-#         self.rect.y = random.randrange(-80, -50)
-#         self.speedy = random.randrange(1, 8)
-
-#     def update(self):
-#         self.rect.y += self.speedy
-#         if self.rect.top > Height + 10:
-#             self.rect.y = random.randrange(-80, -50)
-#             self.rect.x = random.randrange(WIDTH - self.rect.width)
-#             self.speedy = random.randrange(1, 8)		
+	
 
 init()
 top = 50
@@ -136,16 +121,17 @@ f = font.Font(None, 25)
 clock = pygame.time.Clock()
 
 bullet = pygame.sprite.Group()
+falling_list = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
-sprites = pygame.sprite.Group()
-# ball = Ball()
-# sprites.add(ball)
-score = Score()
-paddle = Paddle()
-sprites.add(paddle)
 bullet_list = pygame.sprite.Group()
 falling = pygame.sprite.Group()
-# falling = Falling()
+sprites = pygame.sprite.Group()
+FALL = pygame.sprite.Group()
+FALL = Falling()
+score = Score()
+paddle = Paddle()
+
+sprites.add(paddle)
 sprites.add(falling)
 
 for row in range(5):
@@ -157,7 +143,7 @@ for row in range(5):
 gameDisplay = pygame.display.set_mode((Width, Height))
 screen = gameDisplay
 
-for i in range(10):
+for i in range(15):
 	fall = Falling()
 	sprites.add(fall)
 	falling.add(fall)
@@ -170,8 +156,8 @@ screen.fill(white)
 
 gameExit = False
 game_over = False
-mixer.music.load("closer.wav")
-mixer.music.play(-1)
+pygame.mixer.music.load("closer.wav")
+pygame.mixer.music.play(-1)
 
 while not gameExit:
 	# Ball()
@@ -211,16 +197,22 @@ while not gameExit:
 		if bullet.rect.y < -10:
 			bullet_list.remove(bullet)
 			sprites.remove(bullet)
+		if pygame.sprite.collide_rect(fall,paddle):
+			game_over = True
 
-	if pygame.sprite.spritecollide(bullet,sprites):
-		game_over = True
+	# for bullet in bullet_list:
+	# 	falling_hit_list = pygame.sprite.spritecollide(bullet, falling, True)
+
+	# 	for fall in falling_hit_list:
+	# 		falling_list.remove(falling)
+	# 		sprites.remove(falling)
+	# if pygame.sprite.spritecollide(bullet,sprites, True ):
+	#  	game_over = True
 	if game_over == True:
 		score.gameover(screen)
 
 
 
-	t = f.render("Score = " + str(score), False, (0,0,0))
-	screen.blit(t, (320, 0))
 
 	sprites.update()
 	sprites.draw(screen)
