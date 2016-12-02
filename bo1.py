@@ -92,7 +92,7 @@ class Score(pygame.sprite.Sprite):
 		self.font = pygame.font.SysFont('monospace', 20)
 
 	def draw(self, screen):
-		txt = self.font.render("SCORE:" + str(self.score) + " Lives:" + str(self.life), True, white)
+		txt = self.font.render("SCORE:" + str(self.score) + " Lives 1", True, white)
 		screen.blit(txt, (0, 0))
 
 	def add(self):
@@ -107,6 +107,7 @@ class Score(pygame.sprite.Sprite):
 		score.draw(screen)
 		pygame.display.update()
 		print('bye') 
+		pygame.time.delay(2000)
 
 
 
@@ -129,6 +130,7 @@ paddle = Paddle()
 #Add sprites
 sprites.add(paddle)
 sprites.add(falling)
+sprites.add(fall)
 
 
 #Attributes for the blocks at the top that get passed through the for loop
@@ -165,6 +167,7 @@ clock = pygame.time.Clock()
 pygame.mixer.music.load("closer.wav")
 pygame.mixer.music.play(-1)
 
+laser = pygame.mixer.Sound("laser.wav")
 #Game set variables
 gameExit = False
 game_over = False
@@ -180,22 +183,22 @@ while not gameExit:
 		if event.type == pygame.QUIT:
 			gameExit = True
 		elif event.type == pygame.MOUSEBUTTONDOWN:
+			laser.play()
 			bullet = Bullet()
-			bullet.rect.x = paddle.rect.x
+			bullet.rect.x = paddle.rect.x + paddle.width/2
 			bullet.rect.y = paddle.rect.y
 			sprites.add(bullet)
 			bullet_list.add(bullet)
 
-	if paddle.rect.colliderect(fall):
-		score.lose()
-		print("Hello")
-
-	if self.score.lifes
-		# game_over = True
+	for hit in falling:
+		if paddle.rect.colliderect(hit):
+			print("Hello")
+			game_over = True
 
 	if game_over == True:
 		print("HI")
 		score.gameover(screen)
+		break
 		# txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
 		# screen.blit(txt, (400 - txt.get_width() / 2, 100))
 	# 	pygame.screen.fill(background)
