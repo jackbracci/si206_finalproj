@@ -7,6 +7,7 @@ import random
 import os, sys
 from pygame.locals import *
 
+# Attributes used in classes
 
 white = (255,255,255)
 black = (0,0,0)
@@ -19,12 +20,8 @@ speed = 5
 x_pos = 350
 y_pos = 580
 
-# x = 400
-# y = 300
-# a = 400
-# b = 400
 
-
+init()
  
 class Paddle(pygame.sprite.Sprite):
 
@@ -49,21 +46,18 @@ class Block(pygame.sprite.Sprite):
  
     def __init__(self, color, x, y):
         pygame.sprite.Sprite. __init__ (self)
-
         self.image = pygame.Surface([block_width, block_height])
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self):
-
         pygame.sprite.Sprite.__init__(self)
-
         self.image = pygame.Surface([4, 10])
         self.image.fill(red)
-
         self.rect = self.image.get_rect()
 
     def update(self):
@@ -76,6 +70,7 @@ class Falling(pygame.sprite.Sprite):
 		self.image.fill(red)
 		self.rect = self.image.get_rect()
 		self.rect.x = random.randrange(Width - self.rect.width)
+
 	def back_to_top(self):
 		self.rect.y = random.randrange(-400, -50)
 		self.rect.x = random.randrange(0, Height)
@@ -83,7 +78,6 @@ class Falling(pygame.sprite.Sprite):
 	def fall_collide_with(self, paddle):
 		if self.rect.colliderect(paddle.rect) == True:
 			game_over = True
-
 
 	def update(self):
 		self.rect.y += 15
@@ -103,37 +97,39 @@ class Score(pygame.sprite.Sprite):
 	def add(self):
 		self.score += 1
 
-	def val(self):
-		return self.score
-
 	def gameover(self, screen):
 		txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
 		screen.blit(txt, (400 - txt.get_width() / 2, 100))
 
+
 	
 
-init()
-top = 50
-blockcount = 32
-block_width = 50
-block_height = 20
-f = font.Font(None, 25)
-clock = pygame.time.Clock()
 
+
+#Sprite Groups
 bullet = pygame.sprite.Group()
-falling_list = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
 falling = pygame.sprite.Group()
 sprites = pygame.sprite.Group()
-FALL = pygame.sprite.Group()
-FALL = Falling()
+
+#Class call variable
+fall = Falling()
 score = Score()
 paddle = Paddle()
 
+#Add sprites
 sprites.add(paddle)
 sprites.add(falling)
 
+
+#Attributes for the blocks at the top that get passed through the for loop
+top = 50
+blockcount = 32
+block_width = 50
+block_height = 20
+
+#Create the rows of blocks at the top of the screen
 for row in range(5):
     for column in range(0, blockcount):
         block = Block(green, column * (block_width + 2) , top)
@@ -143,28 +139,30 @@ for row in range(5):
 gameDisplay = pygame.display.set_mode((Width, Height))
 screen = gameDisplay
 
+# Iteration to cycle through falling class to generate multiple falling blocks
 for i in range(15):
 	fall = Falling()
 	sprites.add(fall)
 	falling.add(fall)
 
+#Display settings for pygame
 pygame.display.set_caption("Jack's Project")
-
 screen.fill(white)
+f = font.Font(None, 25)
+clock = pygame.time.Clock()
 
-
-
+#Game set variables
 gameExit = False
 game_over = False
+
+#To play music 
 pygame.mixer.music.load("closer.wav")
 pygame.mixer.music.play(-1)
 
 while not gameExit:
-	# Ball()
-	# Paddle()
-	# Block()
+
 	
-	clock.tick(50)
+	clock.tick(30)
 
 	
 	pygame.display.update()
@@ -177,6 +175,18 @@ while not gameExit:
 			bullet.rect.y = paddle.rect.y
 			sprites.add(bullet)
 			bullet_list.add(bullet)
+
+	if paddle.rect.colliderect(fall):
+		print("Hello")
+		game_over = True
+
+	if game_over == True:
+		print("HI")
+		txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
+		screen.blit(txt, (400 - txt.get_width() / 2, 100))
+	# 	pygame.screen.fill(background)
+	# 	final_text = f.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
+	# 	# screen.blit(txt, (400 - f.get_width() / 2, 100))
 
 	if event.type == pygame.KEYDOWN:
 		if event.key == pygame.K_LEFT:
@@ -197,21 +207,6 @@ while not gameExit:
 		if bullet.rect.y < -10:
 			bullet_list.remove(bullet)
 			sprites.remove(bullet)
-		if pygame.sprite.collide_rect(fall,paddle):
-			game_over = True
-
-	# for bullet in bullet_list:
-	# 	falling_hit_list = pygame.sprite.spritecollide(bullet, falling, True)
-
-	# 	for fall in falling_hit_list:
-	# 		falling_list.remove(falling)
-	# 		sprites.remove(falling)
-	# if pygame.sprite.spritecollide(bullet,sprites, True ):
-	#  	game_over = True
-	if game_over == True:
-		score.gameover(screen)
-
-
 
 
 	sprites.update()
@@ -219,16 +214,27 @@ while not gameExit:
 	score.draw(screen)
 	pygame.display.update()		
 
-
-
-
-#required
 pygame.quit()
 quit()	
 
+	# if pygame.sprite.collide_rect(fall,paddle):
+	# 	print("What's up")
+	# 	game_over = True
+	# 	sprites.update()
+	# 	pygame.sprites.draw(screen)
+	# 	pygame.display.update()
+	# 	break
 
 
+	# for bullet in bullet_list:
+	# 	falling_hit_list = pygame.sprite.spritecollide(bullet, falling, True)
 
+	# 	for fall in falling_hit_list:
+	# 		falling_list.remove(falling)
+	# 		sprites.remove(falling)
+	# hits = pygame.sprite.spritecollide(paddle, fall, False)
+	# if hits:
+	# 	game_over = True
 
 # class Ball(pygame.sprite.Sprite):
 
