@@ -8,7 +8,7 @@ import os, sys
 from pygame.locals import *
 
 # Attributes used in classes
-
+myname = input("Write your Name")
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
@@ -16,7 +16,7 @@ blue = (70,130,180)
 green = (127,255,212)
 Width = 800
 Height = 600
-speed = 5 
+# speed = 5 
 x_pos = 350
 y_pos = 580
 
@@ -37,7 +37,12 @@ class Paddle(pygame.sprite.Sprite):
 		self.rect.x = x_pos
 		self.rect.y = y_pos
 
+
 	def update(self):
+		if self.rect.right > Width:
+			self.rect.right = Width
+		if self.rect.left < 0:
+			self.rect.left = 0
 		self.rect.x = x_pos
 		screen.fill(black)
 	
@@ -80,7 +85,7 @@ class Falling(pygame.sprite.Sprite):
 			game_over = True
 
 	def update(self):
-		self.rect.y += 15
+		self.rect.y += 20
 		if self.rect.y>610:
 			self.back_to_top()
 
@@ -150,7 +155,7 @@ gameDisplay = pygame.display.set_mode((Width, Height))
 screen = gameDisplay
 
 # Iteration to cycle through falling class to generate multiple falling blocks
-for i in range(15):
+for i in range(16):
 	fall = Falling()
 	sprites.add(fall)
 	falling.add(fall)
@@ -161,16 +166,31 @@ screen.fill(white)
 f = font.Font(None, 25)
 clock = pygame.time.Clock()
 
+end_it=False
 
+while (end_it==False):
+    screen.fill(black)
+    myfont=pygame.font.SysFont("Britannic Bold", 30)
+    welcome=myfont.render("Welcome "+myname+" click to start", 1, (70,130, 180))
+    appendix = myfont.render("Controls: Space bar = fire, left_key = move left. right_key = move right", 1 , (70,130,180))
+    objective = myfont.render("Objectives: Dodge the falling blocks and shoot the blocks above", 1, (70,130,180))
+    for event in pygame.event.get():
+        if event.type==MOUSEBUTTONDOWN:
+            end_it=True
+    screen.blit(welcome,(250,200))
+    screen.blit(appendix, (50, 300))
+    screen.blit(objective, (50, 330))
+    pygame.display.flip()
 
 #To play music 
 pygame.mixer.music.load("closer.wav")
 pygame.mixer.music.play(-1)
-
+bomb = pygame.mixer.Sound("bomb.wav")
 laser = pygame.mixer.Sound("laser.wav")
 #Game set variables
 gameExit = False
 game_over = False
+
 
 while not gameExit:
 
@@ -182,13 +202,14 @@ while not gameExit:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			gameExit = True
-		elif event.type == pygame.MOUSEBUTTONDOWN:
-			laser.play()
-			bullet = Bullet()
-			bullet.rect.x = paddle.rect.x + paddle.width/2
-			bullet.rect.y = paddle.rect.y
-			sprites.add(bullet)
-			bullet_list.add(bullet)
+		elif event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				laser.play()
+				bullet = Bullet()
+				bullet.rect.x = paddle.rect.x + paddle.width/2
+				bullet.rect.y = paddle.rect.y
+				sprites.add(bullet)
+				bullet_list.add(bullet)
 
 	for hit in falling:
 		if paddle.rect.colliderect(hit):
@@ -216,7 +237,9 @@ while not gameExit:
 		for block in block_hit_list:
 			bullet_list.remove(bullet)
 			sprites.remove(bullet)
+			bomb.play()
 			score.add()
+
 			
 			# score += 1 
 			# print (score)
