@@ -88,18 +88,26 @@ class Score(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.score = 0
+		self.life = 3
 		self.font = pygame.font.SysFont('monospace', 20)
 
 	def draw(self, screen):
-		txt = self.font.render("SCORE:" + str(self.score) + " Lives 1", True, white)
+		txt = self.font.render("SCORE:" + str(self.score) + " Lives:" + str(self.life), True, white)
 		screen.blit(txt, (0, 0))
 
 	def add(self):
 		self.score += 1
 
+	def lose(self):
+		self.life -=1
+
 	def gameover(self, screen):
 		txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
-		screen.blit(txt, (400 - txt.get_width() / 2, 100))
+		screen.blit(txt, (250 , 300)) 
+		score.draw(screen)
+		pygame.display.update()
+		print('bye') 
+
 
 
 	
@@ -151,13 +159,15 @@ screen.fill(white)
 f = font.Font(None, 25)
 clock = pygame.time.Clock()
 
-#Game set variables
-gameExit = False
-game_over = False
+
 
 #To play music 
 pygame.mixer.music.load("closer.wav")
 pygame.mixer.music.play(-1)
+
+#Game set variables
+gameExit = False
+game_over = False
 
 while not gameExit:
 
@@ -177,16 +187,19 @@ while not gameExit:
 			bullet_list.add(bullet)
 
 	if paddle.rect.colliderect(fall):
+		score.lose()
 		print("Hello")
-		game_over = True
+
+	if self.score.lifes
+		# game_over = True
 
 	if game_over == True:
 		print("HI")
-		txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
-		screen.blit(txt, (400 - txt.get_width() / 2, 100))
+		score.gameover(screen)
+		# txt = self.font.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
+		# screen.blit(txt, (400 - txt.get_width() / 2, 100))
 	# 	pygame.screen.fill(background)
-	# 	final_text = f.render('GAMEOVER! You Scored ' + str(self.score)+ ' points!', True , white)
-	# 	# screen.blit(txt, (400 - f.get_width() / 2, 100))
+
 
 	if event.type == pygame.KEYDOWN:
 		if event.key == pygame.K_LEFT:
