@@ -249,7 +249,7 @@ while not gameExit:
 			bullet_list.remove(bullet)
 			sprites.remove(bullet)
 
-
+#
 	sprites.update()
 	sprites.draw(screen)
 	score.draw(screen)
