@@ -22,7 +22,8 @@ y_pos = 580
 
 
 init()
- 
+
+#paddle class the moves 
 class Paddle(pygame.sprite.Sprite):
 
 
@@ -37,16 +38,19 @@ class Paddle(pygame.sprite.Sprite):
 		self.rect.x = x_pos
 		self.rect.y = y_pos
 
+#updates and doesn't let paddle go off the screen
 
 	def update(self):
+		self.rect.x = x_pos
 		if self.rect.right > Width:
 			self.rect.right = Width
 		if self.rect.left < 0:
 			self.rect.left = 0
-		self.rect.x = x_pos
+
 		screen.fill(black)
 	
 
+#Blocks at the top of the screen that will be destroyed
 class Block(pygame.sprite.Sprite):
  
     def __init__(self, color, x, y):
@@ -57,6 +61,7 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+#bullet class that shoots out of the paddle
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -68,6 +73,7 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         self.rect.y -= 10
 
+#random falling objects 
 class Falling(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
@@ -89,6 +95,7 @@ class Falling(pygame.sprite.Sprite):
 		if self.rect.y>610:
 			self.back_to_top()
 
+#score, lives, and game over screens
 class Score(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
@@ -99,15 +106,15 @@ class Score(pygame.sprite.Sprite):
 	def draw(self, screen):
 		txt = self.font.render("SCORE:" + str(self.score) + " Lives 1", True, white)
 		screen.blit(txt, (0, 0))
-
+#add score and also when player reaches 40 break and tell them they are half way 
 	def add(self):
 		self.score += 1
-		if self.score == 1: 
+		if self.score == 40: 
 			txt = self.font.render('Half Way There with ' + str(self.score)+ ' points!', True , white)
 			screen.blit(txt, (200, 300)) 
 			score.draw(screen)
 			pygame.display.update()
-			pygame.time.delay(4000)
+			pygame.time.delay(1000)
 			WIN = True
 
 	def lose(self):
@@ -162,7 +169,7 @@ gameDisplay = pygame.display.set_mode((Width, Height))
 screen = gameDisplay
 
 # Iteration to cycle through falling class to generate multiple falling blocks
-for i in range(16):
+for i in range(10):
 	fall = Falling()
 	sprites.add(fall)
 	falling.add(fall)
@@ -173,6 +180,7 @@ screen.fill(white)
 f = font.Font(None, 25)
 clock = pygame.time.Clock()
 
+# Home screen display before the game actually starts
 end_it=False
 
 while (end_it==False):
@@ -204,7 +212,7 @@ while not gameExit:
 	
 	clock.tick(30)
 
-	
+	#controls for the game
 	pygame.display.update()
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
